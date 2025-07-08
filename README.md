@@ -1,4 +1,4 @@
-# gone-fishing-mcp
+# "Gone Fishing" MCP Server
 
 ## Dev Setup
 
