@@ -14,6 +14,7 @@
 ```bash
 git clone https://github.com/phelanjo/gone-fishing-mcp.git
 cd src
+cp .env__COPY_ME .env
 ```
 
 2. Install Virtual Environment
