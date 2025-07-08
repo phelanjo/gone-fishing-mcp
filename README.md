@@ -5,7 +5,9 @@
 ### Things you'll need
 **API Keys**
 * `openai` - [Link](https://platform.openai.com/docs/quickstart?api-mode=responses)
+    * Unfortunately, OpenAI's API isn't free. You'll also need a few credits 😭
 * `tomorrow.io` - [Link](https://docs.tomorrow.io/reference/api-authentication)
+    * Tomorrow.io offeres a free rate-limited plan.
 
 ### Steps
 1. Clone Repo
@@ -33,3 +35,12 @@ uvicorn src.main:app --reload
 ```
 
 Now you can access the Swagger docs locally at `http://localhost:8000/docs` and play around with the endpoint.
+
+## Future Considerations
+* Storing data more efficiently (or at all)
+* Handle prompts for multiple bodies of water
+* Look for ways to improve NLP accuracy in finding bodies of water (Maybe just build a database instead?)
+* Get accurate water data. 
+    * USGS (water service) has an API, but there isn't much useful data in there based on the queries I was performing. 
+    * If there isn't a better way, perhaps we could do estimations?
+* Unit Tests!
