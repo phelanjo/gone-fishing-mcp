@@ -97,8 +97,8 @@ def get_location_and_weather_context(prompt: str) -> dict:
     weather_data = weather_service.get_weather_at_location(f"{hydro_feature} {state}")
     weather_data_values = weather_data.get("data", {}).get("values", {})
 
-    wind_direction_degrees = weather_data_values.get("windDirection", None)
-    wind_direction_cardinal = wind_deg_to_direction(wind_direction_degrees)
+    wind_direction_degree = weather_data_values.get("windDirection", None)
+    wind_direction_cardinal = wind_degree_to_direction(wind_direction_degree)
 
     # USGS water data is unreliable, commenting this out for now.
     # lat = weather_data.get("location", {}).get("lat", None)
