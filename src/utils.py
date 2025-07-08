@@ -6,14 +6,19 @@ from .services.weather_service import weather_service
 nlp = spacy.load("en_core_web_sm")
 
 # Conversion Utils
-def wind_deg_to_direction(deg):
+def wind_degree_to_direction(degree: int) -> str:
+    """Converts wind degree to a cardinal direction."""
     directions = [
         "N", "NNE", "NE", "ENE",
         "E", "ESE", "SE", "SSE",
         "S", "SSW", "SW", "WSW",
         "W", "WNW", "NW", "NNW"
     ]
-    index = int((deg + 11.25) % 360 // 22.5)
+    
+    # Round to nearest compass point, make sure it wraps around a full
+    # circle (0-360 degrees) and then divide by 22.5 (360 degrees/16 directions)
+    index = int((degree + 11.25) % 360 // 22.5)
+    
     return directions[index]
 
 
@@ -57,38 +62,35 @@ def extract_location_entities_from_prompt(prompt):
 
 
 # LLM Utils
-def get_location_and_weather_context(self, prompt: str) -> dict:
-    """
-    ## Overview
-    Fetches weather data for a specific location based on a user prompt.
+def get_location_and_weather_context(prompt: str) -> dict:
+    """Fetches weather data for a specific location based on a user prompt.
 
-    ## Description
-    This endpoint extracts location entities from the provided prompt using
+    This method extracts location entities from the provided prompt using
     Named Entity Recognition (NER) and retrieves weather data for the identified
     location.
 
-    ## Args
-    **prompt (str)**: The question or prompt about fishing conditions at a body
-                    of water in a specific state from the LLM.
+    Args
+        prompt (str): The question or prompt about fishing conditions at a body
+                      of water in a specific state from the LLM.
 
-    ## Returns
-    **dict**: A dictionary containing the weather data for the specified location.
-            The structure of the returned data will reflect the structure the MCP
-            server is expecting.
-    ```python
-    {
-        "state": "Arizona",
-        "hydro_feature": "Patagonia Lake",
-        "temperature": 94.2,
-        "cloud_cover": 1,
-        "humidity": 29,
-        "precipitation_chance": 0,
-        "wind_speed": 3.3,
-        "wind_gust": 11,
-        "wind_direction": "NNE",
-        "uv_index": 11
-    }
-    ```
+    Returns
+        dict: A dictionary containing the weather data for the specified location.
+              The structure of the returned data will reflect the structure the MCP
+              server is expecting.
+    
+        Example:
+            {
+                "state": "Arizona",
+                "hydro_feature": "Patagonia Lake",
+                "temperature": 94.2,
+                "cloud_cover": 1,
+                "humidity": 29,
+                "precipitation_chance": 0,
+                "wind_speed": 3.3,
+                "wind_gust": 11,
+                "wind_direction": "NNE",
+                "uv_index": 11
+            }
     """
     state, hydro_feature = extract_location_entities_from_prompt(prompt)
     
@@ -122,7 +124,16 @@ def get_location_and_weather_context(self, prompt: str) -> dict:
 
     return context
 
-def build_role_prompts(self, user_prompt: str, additional_context: dict):
+def build_role_prompts(user_prompt: str, additional_context: dict):
+    """Builds role prompts for the LLM based on user input and additional context.
+    
+    Args:
+        user_prompt (str): The user's question or prompt about fishing conditions.
+        additional_context (dict): A dictionary containing weather and location data.
+        
+    Returns:
+        list: A list of dictionaries representing the role prompts for the LLM.
+    """
     system_prompt = (
         "Context (Units are in imperial - Fahrenheit, mph, etc.):\n"
         f"{json.dumps(additional_context, indent=2)}\n\n"
