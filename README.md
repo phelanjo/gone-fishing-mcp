@@ -5,7 +5,7 @@
 ### Things you'll need
 **API Keys**
 * `openai` - [Link](https://platform.openai.com/docs/quickstart?api-mode=responses)
-    * Unfortunately, OpenAI's API isn't free. You'll also need a few credits 😭
+    * Unfortunately, OpenAI's API isn't free. You'll also need to purchase a few credits 😭
 * `tomorrow.io` - [Link](https://docs.tomorrow.io/reference/api-authentication)
     * Tomorrow.io offeres a free rate-limited plan.
 
