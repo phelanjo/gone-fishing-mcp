@@ -8,7 +8,40 @@
     * Tomorrow.io offeres a free rate-limited plan.
 
 ### Steps
-**TODO**
+1. Clone Repo
+```bash
+git clone https://github.com/phelanjo/gone-fishing-mcp.git
+cd gone-fishing-mcp
+```
+
+2. Install `uv`
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+restart terminal or `source` your env to add `uv` to your PATH.
+
+3. Initialize `uv` in root
+```
+uv init ./
+```
+
+4. Create + Start VENV
+```
+uv venv
+source .venv/bin/activate
+```
+
+5. Install packages from pyproject.toml
+```
+uv sync
+```
+
+Now you can start the MCP server locally with
+```
+mcp dev mcp_server.py
+```
+
+This will create a URL linking to the MCP inspector where you can interact with the `get_location_and_weather_context ` tool.
 
 ## Example Queries
 NLP should be able to pick out `body_of_water` and `state` from a prompt. 
