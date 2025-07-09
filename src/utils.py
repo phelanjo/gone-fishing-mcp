@@ -1,8 +1,9 @@
 import json
 
 import spacy
-from .services.weather_service import weather_service
+from src.api.weather_api import get_weather_at_location
 
+spacy.cli.download("en_core_web_sm")
 nlp = spacy.load("en_core_web_sm")
 
 # Conversion Utils
@@ -93,8 +94,8 @@ def get_location_and_weather_context(prompt: str) -> dict:
             }
     """
     state, hydro_feature = extract_location_entities_from_prompt(prompt)
-    
-    weather_data = weather_service.get_weather_at_location(f"{hydro_feature} {state}")
+
+    weather_data = get_weather_at_location(f"{hydro_feature} {state}")
     weather_data_values = weather_data.get("data", {}).get("values", {})
 
     wind_direction_degree = weather_data_values.get("windDirection", None)
@@ -106,54 +107,18 @@ def get_location_and_weather_context(prompt: str) -> dict:
     # water_data = usgs_service.get_usgs_data(lat, lon)
 
     context = {
-        "location": {
-            "state": state,
-            "hydro_feature": hydro_feature
-        },
-        "weather_conditions": {
-            "temperature": weather_data_values.get("temperature", None),
-            "cloud_cover": weather_data_values.get("cloudCover", None),
-            "humidity": weather_data_values.get("humidity", None),
-            "precipitation_chance": weather_data_values.get("precipitationProbability", None),
-            "wind_speed": weather_data_values.get("windSpeed", None),
-            "wind_gust": weather_data_values.get("windGust", None),
-            "wind_direction": wind_direction_cardinal,
-            "uv_index": weather_data_values.get("uvIndex", None),
-        }
+        "state": state,
+        "hydro_feature": hydro_feature,
+        "temperature": weather_data_values.get("temperature", None),
+        "cloud_cover": weather_data_values.get("cloudCover", None),
+        "humidity": weather_data_values.get("humidity", None),
+        "precipitation_chance": weather_data_values.get("precipitationProbability", None),
+        "wind_speed": weather_data_values.get("windSpeed", None),
+        "wind_gust": weather_data_values.get("windGust", None),
+        "wind_direction": wind_direction_cardinal,
+        "uv_index": weather_data_values.get("uvIndex", None),
     }
 
-    return context
+    print(json.dumps(context, indent=2))
 
-def build_role_prompts(user_prompt: str, additional_context: dict):
-    """Builds role prompts for the LLM based on user input and additional context.
-    
-    Args:
-        user_prompt (str): The user's question or prompt about fishing conditions.
-        additional_context (dict): A dictionary containing weather and location data.
-        
-    Returns:
-        list: A list of dictionaries representing the role prompts for the LLM.
-    """
-    system_prompt = (
-        "Context (Units are in imperial - Fahrenheit, mph, etc.):\n"
-        f"{json.dumps(additional_context, indent=2)}\n\n"
-        "You are a fishing expert.\n\n"
-        "Based on the provided context, answer the user's question about "
-        "fishing conditions at a body of water in a specific state. "
-        "Include recommendations for lures to use and areas to fish based on "
-        "the weather conditions.\n\n"
-        "Answer in a friendly tone, as if you were talking to a fellow fisherman."
-    )
-
-    role_prompts = [
-        {
-            "role": "user",
-            "content": user_prompt
-        },
-        {
-            "role": "system",
-            "content": system_prompt
-        }
-    ]
-
-    return role_prompts
+    return json.dumps(context)
